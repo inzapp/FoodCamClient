@@ -47,7 +47,7 @@ public class main extends AppCompatActivity {
         return Uri.fromFile(new File(storageDir, imageFileName));
     }
 
-    // 촬영 버튼 눌렀을때 실행
+    // 직접 촬영 버튼
     public void takePicBtClick(View view) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         newFileUri = getNewFileUri();
@@ -55,9 +55,19 @@ public class main extends AppCompatActivity {
         startActivityForResult(cameraIntent, REQUEST_TAKE_IMAGE_FROM_CAMERA);
     }
 
+    // 갤러리 사진 선택 버튼
     public void galleryBtClick(View view) {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        galleryIntent.putExtra("crop", "true");
+        galleryIntent.putExtra("aspectX", 1);
+        galleryIntent.putExtra("aspectY", 1);
+        galleryIntent.putExtra("scale", true);
+
+        newFileUri = getNewFileUri();
+        galleryIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri);
+
         startActivityForResult(galleryIntent, REQUEST_GET_IMAGE_FROM_GALLERY);
     }
 
@@ -85,11 +95,10 @@ public class main extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_TAKE_IMAGE_FROM_CAMERA:
                     // 카메라인텐트를 생성할 때 새로운 파일이 임시로 저장될 uri 를 같이 넣어 보냈으므로 여기선 아무것도 안 함
-                    /*empty*/
                     break;
 
                 case REQUEST_GET_IMAGE_FROM_GALLERY:
-                    newFileUri = data.getData(); // 선택된 사진의 uri 를 저장
+//                    newFileUri = data.getData(); // 선택된 사진의 uri 를 저장
 //                    imageView.setRotation(270);
                     break;
 
