@@ -35,6 +35,7 @@ public class main extends AppCompatActivity {
 
     private final int REQUEST_TAKE_IMAGE_FROM_CAMERA = 22; // 직접 사진을 찍기 위한 요청 코드
     private final int REQUEST_GET_IMAGE_FROM_GALLERY = 23; // 갤러리에서 사진을 가져오기 위한 요청코드
+    private final int REQUEST_CROP_FROM_CAMERA = 24; // 카메라 사진 촬영 후 1:1 비율 설정을 위한 요청코드
 
     private Bitmap bitmap;
     private Uri newFileUri;
@@ -71,9 +72,9 @@ public class main extends AppCompatActivity {
         startActivityForResult(galleryIntent, REQUEST_GET_IMAGE_FROM_GALLERY);
     }
 
+    // 분석 버튼
     public void sendBtClick(View view) {
         if (bitmap == null) {
-
             pRes.toast(main.this, mainLooperHandler, R.string.BITMAP_IS_NULL);
             return;
         }
@@ -90,33 +91,46 @@ public class main extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
+        if(resultCode != Activity.RESULT_OK)
+            return;
 
-            switch (requestCode) {
-                case REQUEST_TAKE_IMAGE_FROM_CAMERA:
-                    // 카메라인텐트를 생성할 때 새로운 파일이 임시로 저장될 uri 를 같이 넣어 보냈으므로 여기선 아무것도 안 함
-                    break;
+        switch (requestCode) {
+            case REQUEST_TAKE_IMAGE_FROM_CAMERA:
 
-                case REQUEST_GET_IMAGE_FROM_GALLERY:
-//                    newFileUri = data.getData(); // 선택된 사진의 uri 를 저장
-//                    imageView.setRotation(270);
-                    break;
+                // 촬영된 사진을 1:1 비율로 수정
+                Intent cropIntent = new Intent("com.android.camera.action.CROP");
+                cropIntent.setDataAndType(newFileUri, "image/*");
+                cropIntent.putExtra("aspectX", 1);
+                cropIntent.putExtra("aspectY", 1);
+                cropIntent.putExtra("scale", true);
+                cropIntent.putExtra("return-data", true);
 
-                default:
-                    break;
-            }
+                newFileUri = getNewFileUri();
+                cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri);
 
-            try {
-                // 해당 uri 를 이용한 원본화질의 비트맵 객체 생성
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), newFileUri);
-            } catch (Exception e) {
-                e.printStackTrace();
-                pRes.toast(main.this, mainLooperHandler, R.string.FAIL_TO_GET_BITMAP);
-            }
+                startActivityForResult(cropIntent, REQUEST_CROP_FROM_CAMERA);
+                return;
 
-            // 사용자에게 선택된 이미지를 보여줌
-            imageView.setImageBitmap(bitmap);
+            case REQUEST_GET_IMAGE_FROM_GALLERY:
+                break;
+
+            case REQUEST_CROP_FROM_CAMERA:
+                break;
+
+            default:
+                break;
         }
+
+        try {
+            // 해당 uri 를 이용한 원본화질의 비트맵 객체 생성
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), newFileUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+            pRes.toast(main.this, mainLooperHandler, R.string.FAIL_TO_GET_BITMAP);
+        }
+
+        // 사용자에게 선택된 이미지를 보여줌
+        imageView.setImageBitmap(bitmap);
     }
 
     @Override
