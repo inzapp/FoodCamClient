@@ -33,9 +33,10 @@ public class main extends AppCompatActivity {
     private ImageView imageView;
     private Handler mainLooperHandler;
 
-    private final int REQUEST_TAKE_IMAGE_FROM_CAMERA = 22; // 직접 사진을 찍기 위한 요청 코드
+    private final int REQUEST_GET_IMAGE = 22; // 직접 사진을 찍기 위한 요청 코드
     private final int REQUEST_GET_IMAGE_FROM_GALLERY = 23; // 갤러리에서 사진을 가져오기 위한 요청코드
     private final int REQUEST_CROP_FROM_CAMERA = 24; // 카메라 사진 촬영 후 1:1 비율 설정을 위한 요청코드
+    private final int REQUEST_CROP_FROM_GALLERY = 25; // 갤러리 이미지 선택 후 1:1 비율 설정을 위한 요청코드
 
     private Bitmap bitmap;
     private Uri newFileUri;
@@ -53,7 +54,7 @@ public class main extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         newFileUri = getNewFileUri();
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri); // 해당 uri 에 이미지를 임시로 저장해 원본 화질을 유지한다
-        startActivityForResult(cameraIntent, REQUEST_TAKE_IMAGE_FROM_CAMERA);
+        startActivityForResult(cameraIntent, REQUEST_GET_IMAGE);
     }
 
     // 갤러리 사진 선택 버튼
@@ -69,7 +70,7 @@ public class main extends AppCompatActivity {
         newFileUri = getNewFileUri();
         galleryIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri);
 
-        startActivityForResult(galleryIntent, REQUEST_GET_IMAGE_FROM_GALLERY);
+        startActivityForResult(galleryIntent, REQUEST_CROP_FROM_GALLERY);
     }
 
     // 분석 버튼
@@ -91,46 +92,69 @@ public class main extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode != Activity.RESULT_OK)
+        if (resultCode != Activity.RESULT_OK)
             return;
 
         switch (requestCode) {
-            case REQUEST_TAKE_IMAGE_FROM_CAMERA:
-
-                // 촬영된 사진을 1:1 비율로 수정
-                Intent cropIntent = new Intent("com.android.camera.action.CROP");
-                cropIntent.setDataAndType(newFileUri, "image/*");
-                cropIntent.putExtra("aspectX", 1);
-                cropIntent.putExtra("aspectY", 1);
-                cropIntent.putExtra("scale", true);
-                cropIntent.putExtra("return-data", true);
-
-                newFileUri = getNewFileUri();
-                cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri);
-
-                startActivityForResult(cropIntent, REQUEST_CROP_FROM_CAMERA);
-                return;
+            case REQUEST_GET_IMAGE:
+                sendToCropIntent();
+                break;
 
             case REQUEST_GET_IMAGE_FROM_GALLERY:
                 break;
 
             case REQUEST_CROP_FROM_CAMERA:
-                break;
+            case REQUEST_CROP_FROM_GALLERY:
+                requestPic();
 
             default:
                 break;
         }
 
+    }
+
+    private void sendToCropIntent() {
+        // 촬영된 사진을 1:1 비율로 수정
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        cropIntent.setDataAndType(newFileUri, "image/*");
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("scale", true);
+        cropIntent.putExtra("return-data", true);
+
+        newFileUri = getNewFileUri();
+        cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, newFileUri);
+
+        startActivityForResult(cropIntent, REQUEST_CROP_FROM_CAMERA);
+    }
+
+    private void requestPic() {
         try {
             // 해당 uri 를 이용한 원본화질의 비트맵 객체 생성
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), newFileUri);
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), newFileUri);
         } catch (Exception e) {
             e.printStackTrace();
             pRes.toast(main.this, mainLooperHandler, R.string.FAIL_TO_GET_BITMAP);
+
+            return;
         }
 
         // 사용자에게 선택된 이미지를 보여줌
         imageView.setImageBitmap(bitmap);
+
+        if (bitmap == null) {
+            pRes.toast(main.this, mainLooperHandler, R.string.BITMAP_IS_NULL);
+            return;
+        }
+
+        progressBar.setVisibility(View.VISIBLE);
+        pRes.toast(main.this, mainLooperHandler, R.string.IMAGE_REQUEST); // 이미지 분석 사용자 알림
+
+        pRes.clientThreadPool.execute(() -> {
+            ImageSender imageSender = new ImageSender();
+            imageSender.sendImage(bitmap, main.this, mainLooperHandler);
+            mainLooperHandler.post(() -> progressBar.setVisibility(View.INVISIBLE));
+        });
     }
 
     @Override
