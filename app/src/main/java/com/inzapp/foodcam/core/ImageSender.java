@@ -33,7 +33,7 @@ public final class ImageSender extends ServerConnector {
         if (result == null)
             return;
 
-        alertResult(context, result);
+        alertResult(context, mainLooperHandler, result);
         disconnect();
     }
 
@@ -72,12 +72,13 @@ public final class ImageSender extends ServerConnector {
         }
     }
 
-    private void alertResult(Context context, JSONObject result) {
+    private void alertResult(Context context, Handler mainLooperHandler, JSONObject result) {
         try {
             String link = (String) result.get("link");
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
             context.startActivity(intent);
         } catch (Exception e) {
+            pRes.toast(context, mainLooperHandler, R.string.FOOD_NOT_FOUND);
             e.printStackTrace();
         }
     }
