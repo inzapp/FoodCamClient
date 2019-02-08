@@ -1,4 +1,4 @@
-package com.inzapp.foodguider.core;
+package com.inzapp.foodcam.core;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,8 +6,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 
-import com.inzapp.foodguider.R;
-import com.inzapp.foodguider.utils.pRes;
+import com.inzapp.foodcam.R;
+import com.inzapp.foodcam.utils.pRes;
 
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.inzapp.foodguider.utils;
+package com.inzapp.foodcam.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,7 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.inzapp.foodguider.R;
+import com.inzapp.foodcam.R;
 
 import java.util.ArrayList;
 

@@ -1,12 +1,12 @@
-package com.inzapp.foodguider.core;
+package com.inzapp.foodcam.core;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 
-import com.inzapp.foodguider.R;
+import com.inzapp.foodcam.R;
 import com.inzapp.foodguider.utils.Cmd;
-import com.inzapp.foodguider.utils.pRes;
+import com.inzapp.foodcam.utils.pRes;
 
 import org.json.JSONObject;
 

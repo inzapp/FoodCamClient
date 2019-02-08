@@ -1,4 +1,4 @@
-package com.inzapp.foodguider.view;
+package com.inzapp.foodcam.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,10 +18,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.inzapp.foodguider.R;
-import com.inzapp.foodguider.core.ImageSender;
-import com.inzapp.foodguider.utils.PermissionManager;
-import com.inzapp.foodguider.utils.pRes;
+import com.inzapp.foodcam.R;
+import com.inzapp.foodcam.core.ImageSender;
+import com.inzapp.foodcam.utils.PermissionManager;
+import com.inzapp.foodcam.utils.pRes;
 
 import java.io.File;
 import java.util.concurrent.Executors;

@@ -1,4 +1,4 @@
-package com.inzapp.foodguider.utils;
+package com.inzapp.foodcam.utils;
 
 // 커맨드 키 : 서버에서 해당 어플리케이션에서 접속을 요청하는지를 구분하기 위한 구분자
 public abstract class Cmd {
