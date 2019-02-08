@@ -19,18 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <ImageView
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        android:layout_marginBottom="100sp"
-        android:id="@+id/imageView"
-        android:adjustViewBounds="true"
-        android:layout_width="350sp"
-        android:layout_height="400sp"/>
-
     <LinearLayout
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,15 +55,6 @@
                 android:layout_width="60sp"
                 android:layout_height="60sp"
                 android:src="@drawable/apps_gallery_icon"/>
-
-            <Button
-                android:onClick="sendBtClick"
-                android:id="@+id/send"
-                android:layout_marginLeft="30sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="분석"/>
-
         </LinearLayout>
 
     </LinearLayout>
