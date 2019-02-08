@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.inzapp.foodcam.R;
-import com.inzapp.foodguider.utils.Cmd;
+import com.inzapp.foodcam.utils.Cmd;
 import com.inzapp.foodcam.utils.pRes;
 
 import org.json.JSONObject;
