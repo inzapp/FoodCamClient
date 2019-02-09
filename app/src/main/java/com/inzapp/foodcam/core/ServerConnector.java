@@ -15,13 +15,19 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * 소켓을 이용해 서버 접속을 담당하는 클래스
+ * 서버 연결 후 공중키(pRes)를 보내 지정된 앱에서 접속한다는 것을 알림
+ * 그 후 서버로부터 서버의 부하여부(busy)를 수신받아 접속제한여부를 체크
+ * 부하상태가 아니라면 정상 접속 진행
+ */
 class ServerConnector {
 
     Socket socket;
     ObjectOutputStream oos;
     ObjectInputStream ois;
 
-    // 서버접속 성공시 true 리턴
+    // 서버 연결 : 성공시 true
     boolean connectServer(Context context, Handler mainLooperHandler) {
         try {
             socket = new Socket();
@@ -49,6 +55,7 @@ class ServerConnector {
         }
     }
 
+    // 서버와 데이터 통신을 위한 스트림 생성
     private boolean getStream() {
         try {
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -59,6 +66,7 @@ class ServerConnector {
         }
     }
 
+    // 서버의 Gate를 통과하기 위한 서버키 전송
     private boolean sendServerKey() {
         try {
             JSONObject json = new JSONObject();
@@ -70,6 +78,7 @@ class ServerConnector {
         }
     }
 
+    // 서버의 부하상태 여부 : true 시 서버 접속을 중지한다
     private boolean isServerBusy() {
         try {
             JSONObject json = new JSONObject((String) ois.readObject());
@@ -81,6 +90,7 @@ class ServerConnector {
         }
     }
 
+    // 서버가 부하상태라면 사용자에게 서버가 부하되어 접속이 지연됨을 알림
     private void alertServerIsBusy(Context context, Handler mainLooperHandler) {
         mainLooperHandler.post(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -93,6 +103,7 @@ class ServerConnector {
         });
     }
 
+    // 서버 연결 종료
     void disconnect() {
         try {
             socket.getOutputStream().close();

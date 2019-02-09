@@ -26,25 +26,21 @@ import com.inzapp.foodcam.utils.pRes;
 import java.io.File;
 import java.util.concurrent.Executors;
 
-
+/**
+ * 메인 인텐트 클래스
+ *
+ */
 public class main extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private Handler mainLooperHandler;
 
-    private final int REQUEST_GET_IMG = 22; // 카메라, 갤러리를 이용해 사진을 얻어오는 요청코드
-    private final int REQUEST_CROP_IMG = 24; // 얻어온 사진을 1:1 비율로 수정하기 위한 요청코드
-
     private Bitmap bitmap;
     private Uri imgUri;
 
-    // 촬영한 파일이 임시로 저장될 uri 생성
-    private Uri getNewImgUri() {
-        String imageFileName = "JPEG_" + System.currentTimeMillis() + ".jpg";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    private final int REQUEST_GET_IMG = 22; // 카메라를 이용해 사진을 얻어오는 요청코드
+    private final int REQUEST_CROP_IMG = 24; // 갤러리 사진 요청 후 얻어온 사진을 1:1 비율로 수정하기 위한 요청코드
 
-        return Uri.fromFile(new File(storageDir, imageFileName));
-    }
 
     // 직접 촬영 버튼
     public void takePicBtClick(View view) {
@@ -66,6 +62,14 @@ public class main extends AppCompatActivity {
         startActivityForResult(galleryIntent, REQUEST_CROP_IMG);
     }
 
+    // 촬영한 파일이 임시로 저장될 uri 생성
+    private Uri getNewImgUri() {
+        String imageFileName = "JPEG_" + System.currentTimeMillis() + ".jpg";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return Uri.fromFile(new File(storageDir, imageFileName));
+    }
+
+    // 요청 액티비티 수행 후 결과값에 따른 동작 정의
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK)
@@ -102,7 +106,6 @@ public class main extends AppCompatActivity {
     // 1:1 비율로 수정된 이미지를 서버에 분석 요청
     private void requestPic() {
         try {
-            // 해당 uri 를 이용한 원본화질의 비트맵 객체 생성
             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imgUri);
         } catch (Exception e) {
             e.printStackTrace();

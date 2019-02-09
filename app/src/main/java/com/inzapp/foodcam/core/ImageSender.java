@@ -13,14 +13,20 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * 이미지가 어떤 음식인지 서버에 분석 요청하는 클래스
+ * 이미지를 전송 한 후로 서버로부터
+ * 해당 음식을 소개하는 웹 페이지의 링크를 Json 형태로 수신받는다
+ */
 public final class ImageSender extends ServerConnector {
 
+    // 이미지 전송
     public void sendImage(Bitmap bitmap, Context context, Handler mainLooperHandler) {
         if (!connectServer(context, mainLooperHandler))
             return;
 
         try {
-            sendImageToServer(bitmap);
+            sendByteArrayToServer(bitmap);
         } catch (Exception e) {
             pRes.toast(context, mainLooperHandler, R.string.IMAGE_SEND_FAILURE);
             disconnect();
@@ -37,7 +43,8 @@ public final class ImageSender extends ServerConnector {
         disconnect();
     }
 
-    private void sendImageToServer(Bitmap bitmap) throws Exception {
+    // 비트맵 이미지를 바이트형 배열로 변환 후 서버에 전송
+    private void sendByteArrayToServer(Bitmap bitmap) throws Exception {
         byte[] bitmapByteArr = getByteArr(bitmap);
         if (bitmapByteArr == null)
             throw new Exception("GetByteArrException");
@@ -54,6 +61,7 @@ public final class ImageSender extends ServerConnector {
         return byteArrayOutputStream.toByteArray();
     }
 
+    // 바이트형 배열을 서버에 전송
     private boolean sendByteArrToServer(byte[] bitmapByteArr) {
         try {
             oos.writeObject(bitmapByteArr);
@@ -64,6 +72,7 @@ public final class ImageSender extends ServerConnector {
         }
     }
 
+    // 서버 응답 수신
     private JSONObject getServerResult() {
         try {
             return new JSONObject((String) ois.readObject());
@@ -72,6 +81,7 @@ public final class ImageSender extends ServerConnector {
         }
     }
 
+    // 서버로부터 수신받은 응답에 대한 사용자 알림 : 웹 브라우저를 통해 링크를 실행한다
     private void alertResult(Context context, Handler mainLooperHandler, JSONObject result) {
         try {
             String link = (String) result.get("link");

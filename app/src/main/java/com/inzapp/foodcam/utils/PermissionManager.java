@@ -13,11 +13,17 @@ import com.inzapp.foodcam.R;
 
 import java.util.ArrayList;
 
+/**
+ * 앱 이용에 필요한 권한을 관리하는 클래스
+ * 초기 접속 시 앱 실행에 필요한 권한이 부여되었는지를 확인 후
+ * 부여되지 않은 권한에 대한 권한을 요청한다
+ */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class PermissionManager {
 
     private Activity mainContext;
 
+    // 앱 사용에 필요한 권한들
     private String[] permissions = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -40,6 +46,7 @@ public class PermissionManager {
         }
     }
 
+    // 현재 앱에 대한 권한이 부여되었는지를 체크해 리스트 형으로 반환
     private ArrayList<Integer> getPermissionStateList() {
         ArrayList<Integer> permissionStateList = new ArrayList<>();
 
@@ -49,6 +56,7 @@ public class PermissionManager {
         return permissionStateList;
     }
 
+    // 모든 권한이 부여되었다면 true
     private boolean isAllPermissionGranted(ArrayList<Integer> permissionStateList) {
 
         for (int curState : permissionStateList) {
