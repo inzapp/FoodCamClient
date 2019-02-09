@@ -13,11 +13,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
 
+        tools:ignore="UnusedAttribute"
         android:elevation="5sp"
         android:id="@+id/progressBar"
         android:visibility="invisible"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         app:layout_constraintStart_toStartOf="parent"
@@ -46,15 +47,16 @@
                 android:src="@drawable/r_camera_android"/>
 
             <ImageButton
+                tools:ignore="RtlHardcoded"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:scaleType="fitXY"
                 android:onClick="galleryBtClick"
                 android:id="@+id/gallery"
-                android:layout_marginLeft="30sp"
                 android:layout_width="60sp"
                 android:layout_height="60sp"
-                android:src="@drawable/apps_gallery_icon"/>
+                android:src="@drawable/apps_gallery_icon"
+                android:layout_marginLeft="30sp"/>
         </LinearLayout>
 
     </LinearLayout>
