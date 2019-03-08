@@ -12,6 +12,7 @@ import com.inzapp.foodcam.utils.pRes;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * 이미지가 어떤 음식인지 서버에 분석 요청하는 클래스
@@ -84,8 +85,8 @@ public final class ImageSender extends ServerConnector {
     // 서버로부터 수신받은 응답에 대한 사용자 알림 : 웹 브라우저를 통해 링크를 실행한다
     private void alertResult(Context context, Handler mainLooperHandler, JSONObject result) {
         try {
-            String link = (String) result.get("link");
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+            String link1 = (String) result.get("1");
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link1));
             context.startActivity(intent);
         } catch (Exception e) {
             pRes.toast(context, mainLooperHandler, R.string.FOOD_NOT_FOUND);
