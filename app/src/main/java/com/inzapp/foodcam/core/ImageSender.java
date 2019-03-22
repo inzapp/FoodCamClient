@@ -22,9 +22,9 @@ import java.util.ArrayList;
 public final class ImageSender extends ServerConnector {
 
     // 이미지 전송
-    public void sendImage(Bitmap bitmap, Context context, Handler mainLooperHandler) {
+    public ArrayList<String> sendImage(Bitmap bitmap, Context context, Handler mainLooperHandler) {
         if (!connectServer(context, mainLooperHandler))
-            return;
+            return null;
 
         try {
             sendByteArrayToServer(bitmap);
@@ -33,15 +33,15 @@ public final class ImageSender extends ServerConnector {
             disconnect();
 
             e.printStackTrace();
-            return;
+            return null;
         }
 
         JSONObject result = getServerResult();
         if (result == null)
-            return;
+            return null;
 
-        alertResult(context, mainLooperHandler, result);
         disconnect();
+        return getFoodLinkListByRank(result);
     }
 
     // 비트맵 이미지를 바이트형 배열로 변환 후 서버에 전송
@@ -83,14 +83,21 @@ public final class ImageSender extends ServerConnector {
     }
 
     // 서버로부터 수신받은 응답에 대한 사용자 알림 : 웹 브라우저를 통해 링크를 실행한다
-    private void alertResult(Context context, Handler mainLooperHandler, JSONObject result) {
+    private ArrayList<String> getFoodLinkListByRank(JSONObject json) {
+        ArrayList<String> foodLinkListByRank = new ArrayList<>();
         try {
-            String link1 = (String) result.get("1");
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link1));
-            context.startActivity(intent);
+            int rank = 1;
+            while(true){
+                String curLink = (String) json.get(Integer.toString(rank++));
+                foodLinkListByRank.add(curLink);
+            }
         } catch (Exception e) {
-            pRes.toast(context, mainLooperHandler, R.string.FOOD_NOT_FOUND);
-            e.printStackTrace();
+            /* empty */
         }
+
+        for(String curLink : foodLinkListByRank)
+            System.out.println(curLink);
+
+        return foodLinkListByRank;
     }
 }
