@@ -8,4 +8,5 @@
     <string name="BITMAP_IS_NULL">Please select image</string>
     <string name="SERVER_IS_BUSY">The connection is delayed due to heavy usage\r\nPlease try again later</string>
     <string name="FOOD_NOT_FOUND">Could not find such food</string>
+    <string name="Q_SATISFIED">Are you satisfied with the results?</string>
 </resources>
