@@ -1,6 +1,7 @@
 package com.inzapp.foodcam.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,11 +25,11 @@ import com.inzapp.foodcam.utils.PermissionManager;
 import com.inzapp.foodcam.utils.pRes;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 /**
  * 메인 인텐트 클래스
- *
  */
 public class main extends AppCompatActivity {
 
@@ -40,7 +41,10 @@ public class main extends AppCompatActivity {
 
     private final int REQUEST_GET_IMG = 22; // 카메라를 이용해 사진을 얻어오는 요청코드
     private final int REQUEST_CROP_IMG = 24; // 갤러리 사진 요청 후 얻어온 사진을 1:1 비율로 수정하기 위한 요청코드
+    private final int REQUEST_BROWSER = 25; // 서버 응답에 의한 브라우저 링크 실행에 대한 요청코드
 
+    private ArrayList<String> foodLinkListByRank; // 사진요청 후 서버로부터 수신받는 소개링크 리스트
+    private int linkIdx; // 서버로부터 전송받은 소개링크리스트의 인덱스
 
     // 직접 촬영 버튼
     public void takePicBtClick(View view) {
@@ -72,17 +76,30 @@ public class main extends AppCompatActivity {
     // 요청 액티비티 수행 후 결과값에 따른 동작 정의
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK)
-            return;
-
         switch (requestCode) {
             case REQUEST_GET_IMG:
+                if (resultCode != Activity.RESULT_OK)
+                    return;
                 sendToCropIntent();
                 break;
 
             case REQUEST_CROP_IMG:
+                if (resultCode != Activity.RESULT_OK)
+                    return;
                 requestPic();
+                break;
 
+            case REQUEST_BROWSER:
+                if (resultCode != Activity.RESULT_CANCELED)
+                    return;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("FoodCam")
+                .setMessage(R.string.Q_SATISFIED)
+                .setIcon(R.drawable.app_icon)
+                .setPositiveButton("Yes", (event, inWhich) -> {})
+                .setNegativeButton("No", (event, inWhich) -> executeNextLink());
+                AlertDialog dialog = builder.create();
+                dialog.show();
             default:
                 break;
         }
@@ -122,11 +139,31 @@ public class main extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         pRes.toast(main.this, mainLooperHandler, R.string.IMAGE_REQUEST); // 이미지 분석 사용자 알림
 
+        // 네트워크 처리를 위한 스레드풀을 이용해 이미지를 전송하고 서버로부터 받은 순위링크리스트를 저장한다
         pRes.thdPool.execute(() -> {
             ImageSender imageSender = new ImageSender();
-            imageSender.sendImage(bitmap, main.this, mainLooperHandler);
+            foodLinkListByRank = imageSender.sendImage(bitmap, main.this, mainLooperHandler);
             mainLooperHandler.post(() -> progressBar.setVisibility(View.INVISIBLE));
+
+            if (this.foodLinkListByRank == null)
+                return;
+
+            // 기본적으로 1순위로 수신된 링크를 실행한다. 2, 3순위의 실행은 1순위를 보여준 후 사용자의 응답 여부에 따라 결정된다
+            linkIdx = -1;
+            executeNextLink();
         });
+    }
+
+    // 내장 브라우저를 이용해 링크를 실행한다
+    private void executeNextLink() {
+        ++linkIdx;
+        if(foodLinkListByRank.size() <= linkIdx){
+            pRes.toast(this, mainLooperHandler, R.string.FOOD_NOT_FOUND);
+            return;
+        }
+        Intent intent = new Intent(main.this, Browser.class);
+        intent.putExtra("link", foodLinkListByRank.get(linkIdx));
+        startActivityForResult(intent, REQUEST_BROWSER);
     }
 
     @Override
