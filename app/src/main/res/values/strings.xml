@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">FoodCam</string>
-    <string name="FAIL_TO_GET_BITMAP">이미지를 로드하는데 실패했습니다</string>
-    <string name="ALERT_PERMISSION">권한을 부여하지 않을 시 앱이 정상적으로 작동하지 않을 수 있습니다.</string>
-    <string name="IMAGE_REQUEST">이미지를 분석중입니다 잠시만 기다려주세요</string>
-    <string name="CONNECTION_TIMEOUT">서버와 연결이 불안정합니다</string>
-    <string name="IMAGE_SEND_FAILURE">사진 전송에 실패했습니다</string>
-    <string name="BITMAP_IS_NULL">사진을 선택해주세요</string>
-    <string name="SERVER_IS_BUSY">현재 서버 사용량이 많아 접속이 지연되고있습니다.\r\n잠시 후 다시 시도해주세요</string>
-    <string name="FOOD_NOT_FOUND">해당 음식을 찾을 수 없습니다</string>
+    <string name="FAIL_TO_GET_BITMAP">Failed to load image</string>
+    <string name="ALERT_PERMISSION">If you do not provide the permissions, the application will function normally</string>
+    <string name="IMAGE_REQUEST">Start analysing image. Please wait…</string>
+    <string name="CONNECTION_TIMEOUT">Connection with server is unstable</string>
+    <string name="IMAGE_SEND_FAILURE">Failed to transmit image</string>
+    <string name="BITMAP_IS_NULL">Please select image</string>
+    <string name="SERVER_IS_BUSY">The connection is delayed due to heavy usage\r\nPlease try again later</string>
+    <string name="FOOD_NOT_FOUND">Could not find such food</string>
 </resources>

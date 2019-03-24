@@ -88,6 +88,8 @@ public class main extends AppCompatActivity {
                 requestPic();
 
             case REQUEST_BROWSER:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("");
                 // TODO : 브라우저 Result 처리 -> AlertDialog로 사용자 응답 검사 후 불만족시 다음순위
             default:
                 break;
@@ -128,6 +130,7 @@ public class main extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         pRes.toast(main.this, mainLooperHandler, R.string.IMAGE_REQUEST); // 이미지 분석 사용자 알림
 
+        // 네트워크 처리를 위한 스레드풀을 이용해 이미지를 전송하고 서버로부터 받은 순위링크리스트를 저장한다
         pRes.thdPool.execute(() -> {
             ImageSender imageSender = new ImageSender();
             this.foodLinkListByRank = imageSender.sendImage(bitmap, main.this, mainLooperHandler);
@@ -136,13 +139,16 @@ public class main extends AppCompatActivity {
             if(this.foodLinkListByRank == null)
                 return;
 
+            // 기본적으로 1순위로 수신된 링크를 실행한다. 2, 3순위의 실행은 1순위를 보여준 후 사용자의 응답 여부에 따라 결정된다
             String link1 = foodLinkListByRank.get(0);
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link1));
-            startActivityForResult(intent, REQUEST_BROWSER);
+            executeLink(link1);
         });
+    }
 
-
-
+    // 스마트폰 내장 브라우저를 이용해 링크를 실행한다
+    private void executeLink(String link) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivityForResult(intent, REQUEST_BROWSER);
     }
 
     @Override
