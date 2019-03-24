@@ -42,7 +42,7 @@ public class main extends AppCompatActivity {
 
     private final int REQUEST_GET_IMG = 22; // 카메라를 이용해 사진을 얻어오는 요청코드
     private final int REQUEST_CROP_IMG = 24; // 갤러리 사진 요청 후 얻어온 사진을 1:1 비율로 수정하기 위한 요청코드
-    private final int REQUEST_BROWSER = 25; // 서버 응답에 의한 브라우저 싱크 실행에 대한 요청코드
+    private final int REQUEST_BROWSER = 25; // 서버 응답에 의한 브라우저 링크 실행에 대한 요청코드
 
     private ArrayList<String> foodLinkListByRank;
 
