@@ -188,7 +188,7 @@ public class main extends AppCompatActivity {
         StrictMode.setVmPolicy(builder.build());
 
         // 접근권한 요청
-        PermissionManager perMissionManager = new PermissionManager(main.this);
-        perMissionManager.permissionCheck();
+        PermissionManager permissionManager = new PermissionManager(main.this);
+        permissionManager.permissionCheck();
     }
 }
